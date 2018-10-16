@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.speedyao.dao.mapper.XiaoquMapper" >
+  <resultMap id="BaseResultMap" type="com.speedyao.dao.model.Xiaoqu" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="school" property="school" jdbcType="VARCHAR" />
+    <result column="edu_area" property="eduArea" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, school, edu_area
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_spider_xiaoqu
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_spider_xiaoqu
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.speedyao.dao.model.Xiaoqu" >
+    insert into t_spider_xiaoqu (id, name, school, 
+      edu_area)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR}, 
+      #{eduArea,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.speedyao.dao.model.Xiaoqu" >
+    insert into t_spider_xiaoqu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="school != null" >
+        school,
+      </if>
+      <if test="eduArea != null" >
+        edu_area,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="school != null" >
+        #{school,jdbcType=VARCHAR},
+      </if>
+      <if test="eduArea != null" >
+        #{eduArea,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.speedyao.dao.model.Xiaoqu" >
+    update t_spider_xiaoqu
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="school != null" >
+        school = #{school,jdbcType=VARCHAR},
+      </if>
+      <if test="eduArea != null" >
+        edu_area = #{eduArea,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.speedyao.dao.model.Xiaoqu" >
+    update t_spider_xiaoqu
+    set name = #{name,jdbcType=VARCHAR},
+      school = #{school,jdbcType=VARCHAR},
+      edu_area = #{eduArea,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
