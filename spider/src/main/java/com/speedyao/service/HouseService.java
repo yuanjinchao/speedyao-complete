@@ -1,7 +1,9 @@
 package com.speedyao.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.speedyao.common.CommonUtils;
 import com.speedyao.dao.HouseDao;
+import com.speedyao.dao.mapper.HouseMapper;
 import com.speedyao.dao.mapper.XiaoquMapper;
 import com.speedyao.dao.model.House;
 import com.speedyao.dao.model.Xiaoqu;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.regex.Pattern;
 
 /**
  * Created by speedyao on 2018/10/16.
@@ -38,6 +41,10 @@ public class HouseService {
     private HouseDao houseDao;
     @Autowired
     private XiaoquMapper xiaoquMapper;
+    @Autowired
+    private HouseMapper houseMapper;
+
+    private volatile int restCount = 0;
 
     /**
      * 每周一12点执行一次
@@ -56,7 +63,7 @@ public class HouseService {
                 while ((xiaoqu = queue.poll()) != null) {
                     try {
                         logger.info("开始查询[" + xiaoqu.getName() + "]");
-                        List<HouseVo> list = LianjiaSpider.getLianjiaInfo(xiaoqu.getName());
+                        List<HouseVo> list = LianjiaSpider.getLianjiaByContent(xiaoqu.getName());
                         logger.info("[" + xiaoqu.getName() + "]共查询出" + list.size() + "条");
                         for (HouseVo vo : list) {
                             House house = new House();
@@ -94,6 +101,48 @@ public class HouseService {
                 logger.info("所有小区已查询完成");
             });
         }
+    }
+
+    /**
+     * 填充房屋基本信息和交易信息
+     */
+    @Scheduled(cron = "0 0 11 ? * WED")
+    public void fillHouseDetail() {
+        String date = DateUtils.currentDateStr();
+        House record=new House();
+        record.setDate(date);
+//        record.setId(9607);
+        List<House> houses = houseMapper.selectSelective(record);
+        logger.info("{}共房屋{}条", date, houses.size());
+        restCount = houses.size();
+        houses.forEach(house -> executorService.execute(() -> {
+            try {
+                JSONObject houseDetail = LianjiaSpider.getHouseDetail(house.getUrl());
+                if (houseDetail != null) {
+                    JSONObject baseInfo = houseDetail.getJSONObject("baseInfo");
+                    if (baseInfo != null) {
+                        String age = baseInfo.getString("产权年限");
+                        age = age != null ? age.replaceAll(" ", "").replaceAll("年", "") : null;
+                        if (age != null && Pattern.matches("\\d+", age)) {
+                            house.setAge(Integer.parseInt(age));
+                        }
+                    }
+                    JSONObject dealInfo = houseDetail.getJSONObject("dealInfo");
+                    if (dealInfo != null) {
+                        house.setPubdate(dealInfo.getString("挂牌时间"));
+                        house.setLimitYear(dealInfo.getString("房屋年限"));
+                    }
+                    this.houseMapper.updateByPrimaryKeySelective(house);
+                    restCount--;
+                    if(restCount%100==0){
+                        logger.info("剩余{}条",restCount);
+                    }
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
+        }));
+
     }
 }
 

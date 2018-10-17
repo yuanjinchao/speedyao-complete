@@ -3,28 +3,46 @@
 <mapper namespace="com.speedyao.dao.mapper.HouseMapper" >
   <resultMap id="BaseResultMap" type="com.speedyao.dao.model.House" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="url" property="url" jdbcType="VARCHAR" />
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="xiaoqu" property="xiaoqu" jdbcType="VARCHAR" />
-    <result column="type" property="type" jdbcType="VARCHAR" />
-    <result column="area" property="area" jdbcType="VARCHAR" />
-    <result column="flood" property="flood" jdbcType="VARCHAR" />
     <result column="position" property="position" jdbcType="VARCHAR" />
-    <result column="focus_count" property="focusCount" jdbcType="INTEGER" />
-    <result column="follow_count" property="followCount" jdbcType="INTEGER" />
-    <result column="pubdate" property="pubdate" jdbcType="VARCHAR" />
-    <result column="tag" property="tag" jdbcType="VARCHAR" />
     <result column="total_price" property="totalPrice" jdbcType="DOUBLE" />
     <result column="unit_price" property="unitPrice" jdbcType="VARCHAR" />
+    <result column="limit_year" property="limitYear" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="pubdate" property="pubdate" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="focus_count" property="focusCount" jdbcType="INTEGER" />
+    <result column="follow_count" property="followCount" jdbcType="INTEGER" />
     <result column="school" property="school" jdbcType="VARCHAR" />
     <result column="edu_area" property="eduArea" jdbcType="VARCHAR" />
+    <result column="tag" property="tag" jdbcType="VARCHAR" />
+    <result column="flood" property="flood" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
     <result column="date" property="date" jdbcType="VARCHAR" />
     <result column="insert_time" property="insertTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, url, title, xiaoqu, type, area, flood, position, focus_count, follow_count, pubdate, 
-    tag, total_price, unit_price, school, edu_area, date, insert_time
+    id, title, xiaoqu, position, total_price, unit_price, limit_year, type, age, pubdate, 
+    area, focus_count, follow_count, school, edu_area, tag, flood, url, date, insert_time
   </sql>
+
+  <select id="selectSelective" resultMap="BaseResultMap" parameterType="com.speedyao.dao.model.House" >
+    select
+    <include refid="Base_Column_List" />
+    from t_spider_house
+    where
+      1=1
+    <if test="date != null" >
+      and date = #{date,jdbcType=VARCHAR}
+    </if>
+    <if test="id != null" >
+      and id>= #{id,jdbcType=INTEGER}
+    </if>
+    ORDER BY  id
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -36,20 +54,20 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.speedyao.dao.model.House" >
-    insert into t_spider_house (id, url, title, 
-      xiaoqu, type, area, 
-      flood, position, focus_count, 
-      follow_count, pubdate, tag, 
-      total_price, unit_price, school, 
-      edu_area, date, insert_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
-      #{xiaoqu,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, 
-      #{flood,jdbcType=VARCHAR}, #{position,jdbcType=VARCHAR}, #{focusCount,jdbcType=INTEGER}, 
-      #{followCount,jdbcType=INTEGER}, #{pubdate,jdbcType=VARCHAR}, #{tag,jdbcType=VARCHAR}, 
-      #{totalPrice,jdbcType=DOUBLE}, #{unitPrice,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR}, 
-      #{eduArea,jdbcType=VARCHAR}, #{date,jdbcType=VARCHAR}, #{insertTime,jdbcType=TIMESTAMP}
-      )
+    insert into t_spider_house (id, title, xiaoqu, 
+      position, total_price, unit_price, 
+      limit_year, type, age, 
+      pubdate, area, focus_count, 
+      follow_count, school, edu_area, 
+      tag, flood, url, date, 
+      insert_time)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{xiaoqu,jdbcType=VARCHAR}, 
+      #{position,jdbcType=VARCHAR}, #{totalPrice,jdbcType=DOUBLE}, #{unitPrice,jdbcType=VARCHAR}, 
+      #{limitYear,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, 
+      #{pubdate,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{focusCount,jdbcType=INTEGER}, 
+      #{followCount,jdbcType=INTEGER}, #{school,jdbcType=VARCHAR}, #{eduArea,jdbcType=VARCHAR}, 
+      #{tag,jdbcType=VARCHAR}, #{flood,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{date,jdbcType=VARCHAR}, 
+      #{insertTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.speedyao.dao.model.House" >
     insert into t_spider_house
@@ -57,38 +75,14 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="url != null" >
-        url,
-      </if>
       <if test="title != null" >
         title,
       </if>
       <if test="xiaoqu != null" >
         xiaoqu,
       </if>
-      <if test="type != null" >
-        type,
-      </if>
-      <if test="area != null" >
-        area,
-      </if>
-      <if test="flood != null" >
-        flood,
-      </if>
       <if test="position != null" >
         position,
-      </if>
-      <if test="focusCount != null" >
-        focus_count,
-      </if>
-      <if test="followCount != null" >
-        follow_count,
-      </if>
-      <if test="pubdate != null" >
-        pubdate,
-      </if>
-      <if test="tag != null" >
-        tag,
       </if>
       <if test="totalPrice != null" >
         total_price,
@@ -96,11 +90,41 @@
       <if test="unitPrice != null" >
         unit_price,
       </if>
+      <if test="limitYear != null" >
+        limit_year,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="pubdate != null" >
+        pubdate,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="focusCount != null" >
+        focus_count,
+      </if>
+      <if test="followCount != null" >
+        follow_count,
+      </if>
       <if test="school != null" >
         school,
       </if>
       <if test="eduArea != null" >
         edu_area,
+      </if>
+      <if test="tag != null" >
+        tag,
+      </if>
+      <if test="flood != null" >
+        flood,
+      </if>
+      <if test="url != null" >
+        url,
       </if>
       <if test="date != null" >
         date,
@@ -113,38 +137,14 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="url != null" >
-        #{url,jdbcType=VARCHAR},
-      </if>
       <if test="title != null" >
         #{title,jdbcType=VARCHAR},
       </if>
       <if test="xiaoqu != null" >
         #{xiaoqu,jdbcType=VARCHAR},
       </if>
-      <if test="type != null" >
-        #{type,jdbcType=VARCHAR},
-      </if>
-      <if test="area != null" >
-        #{area,jdbcType=VARCHAR},
-      </if>
-      <if test="flood != null" >
-        #{flood,jdbcType=VARCHAR},
-      </if>
       <if test="position != null" >
         #{position,jdbcType=VARCHAR},
-      </if>
-      <if test="focusCount != null" >
-        #{focusCount,jdbcType=INTEGER},
-      </if>
-      <if test="followCount != null" >
-        #{followCount,jdbcType=INTEGER},
-      </if>
-      <if test="pubdate != null" >
-        #{pubdate,jdbcType=VARCHAR},
-      </if>
-      <if test="tag != null" >
-        #{tag,jdbcType=VARCHAR},
       </if>
       <if test="totalPrice != null" >
         #{totalPrice,jdbcType=DOUBLE},
@@ -152,11 +152,41 @@
       <if test="unitPrice != null" >
         #{unitPrice,jdbcType=VARCHAR},
       </if>
+      <if test="limitYear != null" >
+        #{limitYear,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="pubdate != null" >
+        #{pubdate,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="focusCount != null" >
+        #{focusCount,jdbcType=INTEGER},
+      </if>
+      <if test="followCount != null" >
+        #{followCount,jdbcType=INTEGER},
+      </if>
       <if test="school != null" >
         #{school,jdbcType=VARCHAR},
       </if>
       <if test="eduArea != null" >
         #{eduArea,jdbcType=VARCHAR},
+      </if>
+      <if test="tag != null" >
+        #{tag,jdbcType=VARCHAR},
+      </if>
+      <if test="flood != null" >
+        #{flood,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
       </if>
       <if test="date != null" >
         #{date,jdbcType=VARCHAR},
@@ -169,38 +199,14 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.speedyao.dao.model.House" >
     update t_spider_house
     <set >
-      <if test="url != null" >
-        url = #{url,jdbcType=VARCHAR},
-      </if>
       <if test="title != null" >
         title = #{title,jdbcType=VARCHAR},
       </if>
       <if test="xiaoqu != null" >
         xiaoqu = #{xiaoqu,jdbcType=VARCHAR},
       </if>
-      <if test="type != null" >
-        type = #{type,jdbcType=VARCHAR},
-      </if>
-      <if test="area != null" >
-        area = #{area,jdbcType=VARCHAR},
-      </if>
-      <if test="flood != null" >
-        flood = #{flood,jdbcType=VARCHAR},
-      </if>
       <if test="position != null" >
         position = #{position,jdbcType=VARCHAR},
-      </if>
-      <if test="focusCount != null" >
-        focus_count = #{focusCount,jdbcType=INTEGER},
-      </if>
-      <if test="followCount != null" >
-        follow_count = #{followCount,jdbcType=INTEGER},
-      </if>
-      <if test="pubdate != null" >
-        pubdate = #{pubdate,jdbcType=VARCHAR},
-      </if>
-      <if test="tag != null" >
-        tag = #{tag,jdbcType=VARCHAR},
       </if>
       <if test="totalPrice != null" >
         total_price = #{totalPrice,jdbcType=DOUBLE},
@@ -208,11 +214,41 @@
       <if test="unitPrice != null" >
         unit_price = #{unitPrice,jdbcType=VARCHAR},
       </if>
+      <if test="limitYear != null" >
+        limit_year = #{limitYear,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="pubdate != null" >
+        pubdate = #{pubdate,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="focusCount != null" >
+        focus_count = #{focusCount,jdbcType=INTEGER},
+      </if>
+      <if test="followCount != null" >
+        follow_count = #{followCount,jdbcType=INTEGER},
+      </if>
       <if test="school != null" >
         school = #{school,jdbcType=VARCHAR},
       </if>
       <if test="eduArea != null" >
         edu_area = #{eduArea,jdbcType=VARCHAR},
+      </if>
+      <if test="tag != null" >
+        tag = #{tag,jdbcType=VARCHAR},
+      </if>
+      <if test="flood != null" >
+        flood = #{flood,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
       </if>
       <if test="date != null" >
         date = #{date,jdbcType=VARCHAR},
@@ -225,21 +261,23 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.speedyao.dao.model.House" >
     update t_spider_house
-    set url = #{url,jdbcType=VARCHAR},
-      title = #{title,jdbcType=VARCHAR},
+    set title = #{title,jdbcType=VARCHAR},
       xiaoqu = #{xiaoqu,jdbcType=VARCHAR},
-      type = #{type,jdbcType=VARCHAR},
-      area = #{area,jdbcType=VARCHAR},
-      flood = #{flood,jdbcType=VARCHAR},
       position = #{position,jdbcType=VARCHAR},
-      focus_count = #{focusCount,jdbcType=INTEGER},
-      follow_count = #{followCount,jdbcType=INTEGER},
-      pubdate = #{pubdate,jdbcType=VARCHAR},
-      tag = #{tag,jdbcType=VARCHAR},
       total_price = #{totalPrice,jdbcType=DOUBLE},
       unit_price = #{unitPrice,jdbcType=VARCHAR},
+      limit_year = #{limitYear,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      pubdate = #{pubdate,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      focus_count = #{focusCount,jdbcType=INTEGER},
+      follow_count = #{followCount,jdbcType=INTEGER},
       school = #{school,jdbcType=VARCHAR},
       edu_area = #{eduArea,jdbcType=VARCHAR},
+      tag = #{tag,jdbcType=VARCHAR},
+      flood = #{flood,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
       date = #{date,jdbcType=VARCHAR},
       insert_time = #{insertTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

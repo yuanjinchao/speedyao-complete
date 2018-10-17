@@ -2,6 +2,8 @@ package com.speedyao.dao.mapper;
 
 import com.speedyao.dao.model.House;
 
+import java.util.List;
+
 public interface HouseMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,5 @@ public interface HouseMapper {
     int updateByPrimaryKeySelective(House record);
 
     int updateByPrimaryKey(House record);
+    List<House> selectSelective(House record);
 }

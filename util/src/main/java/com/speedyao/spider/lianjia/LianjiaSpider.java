@@ -1,10 +1,14 @@
 package com.speedyao.spider.lianjia;
 
+import cn.wanghaomiao.xpath.model.JXDocument;
+import com.alibaba.fastjson.JSONObject;
+import com.speedyao.spider.JsoupWrapper;
 import com.speedyao.spider.lianjia.vo.HouseVo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.seimicrawler.xpath.exception.XpathSyntaxErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +23,7 @@ import java.util.List;
  */
 public class LianjiaSpider {
     static Logger logger = LoggerFactory.getLogger(LianjiaSpider.class);
+    final static int TIME_OUT = 30 * 1000;
 
     /**
      * 获取链家的房产信息
@@ -26,12 +31,12 @@ public class LianjiaSpider {
      * @param content
      * @throws IOException
      */
-    public static List<HouseVo> getLianjiaInfo(String content) throws IOException {
+    public static List<HouseVo> getLianjiaByContent(String content) throws IOException {
         List<HouseVo> list = new ArrayList<>();
         String baseUrl = "https://tj.lianjia.com/ershoufang";
         String url = baseUrl + "/rs" + URLEncoder.encode(content, "UTF-8") + "/";
         logger.info(content + ">>开始请求：" + url);
-        Document document = Jsoup.parse(new URL(url), 30 * 1000);
+        Document document = JsoupWrapper.parse(new URL(url), TIME_OUT);
         logger.info(content + ">>请求成功：" + url);
         parseSellList(list, document);
         //判断是否有分页数据
@@ -50,7 +55,7 @@ public class LianjiaSpider {
                     Document pageDocument;
                     try {
                         logger.info(content + ">>开始请求：" + url);
-                        pageDocument = Jsoup.parse(new URL(pageUrl), 30 * 1000);
+                        pageDocument = JsoupWrapper.parse(new URL(pageUrl), 30 * 1000);
                         logger.info(content + ">>请求第" + a.text() + "页数据成功");
                         parseSellList(list, pageDocument);
                     } catch (IOException e) {
@@ -108,4 +113,39 @@ public class LianjiaSpider {
 
         }
     }
+
+    public static final String XPATH_BASE = "//*[@id=\"introduction\"]/div/div/div[1]/div[2]/ul";//基本信息
+    public static final String XPATH_DEAL = "//*[@id=\"introduction\"]/div/div/div[2]/div[2]/ul";//交易信息
+
+    public static JSONObject getHouseDetail(String url) throws IOException, XpathSyntaxErrorException {
+
+        JSONObject json=new JSONObject();
+        Document document = JsoupWrapper.parse(new URL(url), TIME_OUT);
+        JXDocument jxDocument = new JXDocument(document);
+        List<Object> baseInfo = jxDocument.sel(XPATH_BASE);
+        if(!baseInfo.isEmpty()){
+            Element element = (Element) baseInfo.get(0);
+            Elements children = element.children();
+            JSONObject baseJson=new JSONObject();
+            for(Element child:children){
+                String key=child.getElementsByTag("span").text();
+                String value=child.text().replace(key,"");
+                baseJson.put(key,value);
+            }
+            json.put("baseInfo",baseJson);
+        }
+        List<Object> dealInfo = jxDocument.sel(XPATH_DEAL);
+        if(!dealInfo.isEmpty()){
+            Element element = (Element) dealInfo.get(0);
+            Elements children = element.children();
+            JSONObject dealJson=new JSONObject();
+            children.forEach(child->{
+                Elements span = child.getElementsByTag("span");
+                dealJson.put(span.get(0).text(),span.get(1).text());
+            });
+            json.put("dealInfo",dealJson);
+        }
+        return json;
+    }
+
 }

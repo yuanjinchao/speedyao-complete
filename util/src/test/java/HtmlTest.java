@@ -1,9 +1,11 @@
+import com.alibaba.fastjson.JSONObject;
 import com.speedyao.spider.lianjia.LianjiaSpider;
 import com.speedyao.spider.lianjia.vo.HouseVo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.Test;
+import org.seimicrawler.xpath.exception.XpathSyntaxErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +52,7 @@ public class HtmlTest {
         List<HouseVo> list = new ArrayList<>();
         LianjiaSpider lianjiaSpider = new LianjiaSpider();
         for (String content : split) {
-            list.addAll(lianjiaSpider.getLianjiaInfo(content));
+            list.addAll(lianjiaSpider.getLianjiaByContent(content));
         }
         list.sort((a, b) -> {
             if (a.getTotalPrice() > b.getTotalPrice()) {
@@ -69,6 +71,12 @@ public class HtmlTest {
     @Test
     public void testLogger(){
         logger.info("a");
+    }
+
+    @Test
+    public void testHouseInfo() throws IOException, XpathSyntaxErrorException {
+        JSONObject json = LianjiaSpider.getHouseDetail("https://tj.lianjia.com/ershoufang/101102533797.html");
+        System.out.println(json);
     }
 
 
