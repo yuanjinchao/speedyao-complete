@@ -23,7 +23,7 @@ public class JsoupWrapper {
     static Logger logger = LoggerFactory.getLogger(JsoupWrapper.class);
     static ExecutorService executorService = Executors.newFixedThreadPool(2);
     final static String LOG_DIR = "E:\\spider\\";
-    static boolean enableLog=true;
+    static boolean enableLog=false;
 
     /**
      *
