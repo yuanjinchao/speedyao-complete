@@ -11,17 +11,19 @@ public class House {
 
     private String xiaoqu;
 
-    private String xiaoquUrl;
+    private String type;
 
-    private String info;
+    private String area;
 
     private String flood;
 
     private String position;
 
-    private String positionUrl;
+    private Integer focusCount;
 
-    private String followInfo;
+    private Integer followCount;
+
+    private String pubdate;
 
     private String tag;
 
@@ -69,20 +71,20 @@ public class House {
         this.xiaoqu = xiaoqu == null ? null : xiaoqu.trim();
     }
 
-    public String getXiaoquUrl() {
-        return xiaoquUrl;
+    public String getType() {
+        return type;
     }
 
-    public void setXiaoquUrl(String xiaoquUrl) {
-        this.xiaoquUrl = xiaoquUrl == null ? null : xiaoquUrl.trim();
+    public void setType(String type) {
+        this.type = type == null ? null : type.trim();
     }
 
-    public String getInfo() {
-        return info;
+    public String getArea() {
+        return area;
     }
 
-    public void setInfo(String info) {
-        this.info = info == null ? null : info.trim();
+    public void setArea(String area) {
+        this.area = area == null ? null : area.trim();
     }
 
     public String getFlood() {
@@ -101,20 +103,28 @@ public class House {
         this.position = position == null ? null : position.trim();
     }
 
-    public String getPositionUrl() {
-        return positionUrl;
+    public Integer getFocusCount() {
+        return focusCount;
     }
 
-    public void setPositionUrl(String positionUrl) {
-        this.positionUrl = positionUrl == null ? null : positionUrl.trim();
+    public void setFocusCount(Integer focusCount) {
+        this.focusCount = focusCount;
     }
 
-    public String getFollowInfo() {
-        return followInfo;
+    public Integer getFollowCount() {
+        return followCount;
     }
 
-    public void setFollowInfo(String followInfo) {
-        this.followInfo = followInfo == null ? null : followInfo.trim();
+    public void setFollowCount(Integer followCount) {
+        this.followCount = followCount;
+    }
+
+    public String getPubdate() {
+        return pubdate;
+    }
+
+    public void setPubdate(String pubdate) {
+        this.pubdate = pubdate == null ? null : pubdate.trim();
     }
 
     public String getTag() {

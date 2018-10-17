@@ -6,11 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.Arrays;
 
 @SpringBootApplication(scanBasePackages = {"com.speedyao.**"})
 @MapperScan(basePackages = {"com.speedyao.dao.mapper"})
+@EnableScheduling
 public class SpiderApplication {
 	static Logger logger= LoggerFactory.getLogger(SpiderApplication.class);
 	public static void main(String[] args) {
