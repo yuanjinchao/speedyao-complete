@@ -106,42 +106,50 @@ public class HouseService {
     /**
      * 填充房屋基本信息和交易信息
      */
-    @Scheduled(cron = "0 0 11 ? * WED")
+    @Scheduled(cron = "10 5 23 ? * WED")
     public void fillHouseDetail() {
         String date = DateUtils.currentDateStr();
-        House record=new House();
+        House record = new House();
         record.setDate(date);
-//        record.setId(9607);
+//        record.setId(11600);
         List<House> houses = houseMapper.selectSelective(record);
         logger.info("{}共房屋{}条", date, houses.size());
         restCount = houses.size();
-        houses.forEach(house -> executorService.execute(() -> {
-            try {
-                JSONObject houseDetail = LianjiaSpider.getHouseDetail(house.getUrl());
-                if (houseDetail != null) {
-                    JSONObject baseInfo = houseDetail.getJSONObject("baseInfo");
-                    if (baseInfo != null) {
-                        String age = baseInfo.getString("产权年限");
-                        age = age != null ? age.replaceAll(" ", "").replaceAll("年", "") : null;
-                        if (age != null && Pattern.matches("\\d+", age)) {
-                            house.setAge(Integer.parseInt(age));
+        LinkedBlockingQueue<House> queue = new LinkedBlockingQueue<>(houses.size());
+        houses.forEach(house -> queue.offer(house));
+        for (int i = 0; i < THREAD_SIZE; i++) {
+            executorService.execute(() -> {
+                while (!queue.isEmpty()) {
+                    House house = queue.poll();
+                    try {
+                        JSONObject houseDetail = LianjiaSpider.getHouseDetail(house.getUrl());
+                        if (houseDetail != null) {
+                            JSONObject baseInfo = houseDetail.getJSONObject("baseInfo");
+                            if (baseInfo != null) {
+                                String age = baseInfo.getString("产权年限");
+                                age = age != null ? age.replaceAll(" ", "").replaceAll("年", "") : null;
+                                if (age != null && Pattern.matches("\\d+", age)) {
+                                    house.setAge(Integer.parseInt(age));
+                                }
+                            }
+                            JSONObject dealInfo = houseDetail.getJSONObject("dealInfo");
+                            if (dealInfo != null) {
+                                house.setPubdate(dealInfo.getString("挂牌时间"));
+                                house.setLimitYear(dealInfo.getString("房屋年限"));
+                            }
+                            this.houseMapper.updateByPrimaryKeySelective(house);
+                            restCount--;
+                            if (restCount % 10 == 0) {
+                                logger.info("剩余{}条", restCount);
+                            }
                         }
-                    }
-                    JSONObject dealInfo = houseDetail.getJSONObject("dealInfo");
-                    if (dealInfo != null) {
-                        house.setPubdate(dealInfo.getString("挂牌时间"));
-                        house.setLimitYear(dealInfo.getString("房屋年限"));
-                    }
-                    this.houseMapper.updateByPrimaryKeySelective(house);
-                    restCount--;
-                    if(restCount%100==0){
-                        logger.info("剩余{}条",restCount);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage());
                     }
                 }
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-            }
-        }));
+                logger.info("执行完成");
+            });
+        }
 
     }
 }
