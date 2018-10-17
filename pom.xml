@@ -19,32 +19,4 @@
         <java.version>1.8</java.version>
     </properties>
 
-
-
-
-
-    <profiles>
-    <profile>
-        <id>dev</id>
-        <activation>
-            <activeByDefault>true</activeByDefault>
-        </activation>
-        <properties>
-            <profile.id>dev</profile.id>
-        </properties>
-    </profile>
-    <profile>
-        <id>sit</id>
-        <properties>
-            <profile.id>sit</profile.id>
-        </properties>
-    </profile>
-    <profile>
-        <id>pro</id>
-        <properties>
-            <profile.id>pro</profile.id>
-        </properties>
-    </profile>
-</profiles>
-
 </project>

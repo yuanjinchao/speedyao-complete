@@ -1,5 +1,6 @@
 package com.speedyao.date;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -32,5 +33,12 @@ public class DateUtils {
             }
         }
         return age;
+    }
+    public static String formatDate(String str,Date date){
+        SimpleDateFormat format=new SimpleDateFormat(str);
+        return format.format(date);
+    }
+    public static String currentDateStr(){
+        return formatDate("yyyyMMdd",new Date());
     }
 }

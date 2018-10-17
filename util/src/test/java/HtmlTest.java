@@ -1,11 +1,11 @@
+import com.speedyao.spider.lianjia.LianjiaSpider;
+import com.speedyao.spider.lianjia.vo.HouseVo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.speedyao.spider.lianjia.LianjiaSpider;
-import com.speedyao.spider.lianjia.vo.HouseVo;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class HtmlTest {
         List<HouseVo> list = new ArrayList<>();
         LianjiaSpider lianjiaSpider = new LianjiaSpider();
         for (String content : split) {
-            lianjiaSpider.getLianjiaInfo(content,list);
+            list.addAll(lianjiaSpider.getLianjiaInfo(content));
         }
         list.sort((a, b) -> {
             if (a.getTotalPrice() > b.getTotalPrice()) {

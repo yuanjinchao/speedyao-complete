@@ -1,56 +1,57 @@
 package com.speedyao.spider.lianjia;
 
+import com.speedyao.spider.lianjia.vo.HouseVo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.speedyao.spider.lianjia.vo.HouseVo;
 
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by speedyao on 2018/10/12.
  */
 public class LianjiaSpider {
-    Logger logger= LoggerFactory.getLogger(LianjiaSpider.class);
+    static Logger logger = LoggerFactory.getLogger(LianjiaSpider.class);
 
     /**
      * 获取链家的房产信息
      *
      * @param content
-     * @param list
      * @throws IOException
      */
-    public void getLianjiaInfo(String content, List<HouseVo> list) throws IOException {
+    public static List<HouseVo> getLianjiaInfo(String content) throws IOException {
+        List<HouseVo> list = new ArrayList<>();
         String baseUrl = "https://tj.lianjia.com/ershoufang";
         String url = baseUrl + "/rs" + URLEncoder.encode(content, "UTF-8") + "/";
-        logger.info(content+">>开始请求："+url);
+        logger.info(content + ">>开始请求：" + url);
         Document document = Jsoup.parse(new URL(url), 30 * 1000);
-        logger.info(content+">>请求成功："+url);
+        logger.info(content + ">>请求成功：" + url);
         parseSellList(list, document);
         //判断是否有分页数据
         Elements pages = document.getElementsByAttributeValue("comp-module", "page");
-        if(pages.size()<=0){
-            return;
+        if (pages.size() <= 0) {
+            return list;
         }
         Element page = pages.get(0);
         Elements children = page.children();
-        logger.info(content+">>有分页数据，共有"+children.size()+"页");
-        if(children.size()>0){
-            logger.info(content+">>有分页数据，共有"+children.size()+"页");
-            children.forEach(a->{
-                if(!"1".equals(a.text())){
-                    String pageUrl=baseUrl+a.attr("href");
+        logger.info(content + ">>有分页数据，共有" + children.size() + "页");
+        if (children.size() > 0) {
+            logger.info(content + ">>有分页数据，共有" + children.size() + "页");
+            children.forEach(a -> {
+                if (!"1".equals(a.text())) {
+                    String pageUrl = baseUrl + a.attr("href");
                     Document pageDocument;
                     try {
-                        logger.info(content+">>开始请求："+url);
+                        logger.info(content + ">>开始请求：" + url);
                         pageDocument = Jsoup.parse(new URL(pageUrl), 30 * 1000);
-                        logger.info(content+">>请求第"+a.text()+"页数据成功");
+                        logger.info(content + ">>请求第" + a.text() + "页数据成功");
                         parseSellList(list, pageDocument);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -58,13 +59,14 @@ public class LianjiaSpider {
                 }
             });
         }
+        return list;
     }
 
-    private void parseSellList(List<HouseVo> list, Document document) {
-        Elements sellList = document.getElementsByAttributeValueContaining("class","sellListContent");
+    private static void parseSellList(List<HouseVo> list, Document document) {
+        Elements sellList = document.getElementsByAttributeValueContaining("class", "sellListContent");
         if (sellList.size() > 0) {
             Elements children = sellList.get(0).children();
-            logger.info("共有"+children.size()+"条数据");
+            logger.info("共有" + children.size() + "条数据");
             children.forEach(element -> {
                 try {
                     HouseVo vo = new HouseVo();
@@ -100,7 +102,7 @@ public class LianjiaSpider {
                     list.add(vo);
                 } catch (Exception e) {
                     logger.error(element.toString());
-                    logger.error(e.getMessage(),e);
+                    logger.error(e.getMessage(), e);
                 }
             });
 
