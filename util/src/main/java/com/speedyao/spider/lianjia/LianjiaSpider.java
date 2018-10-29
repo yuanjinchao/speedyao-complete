@@ -1,10 +1,10 @@
 package com.speedyao.spider.lianjia;
 
 import cn.wanghaomiao.xpath.model.JXDocument;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.speedyao.spider.JsoupWrapper;
 import com.speedyao.spider.lianjia.vo.HouseVo;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -33,8 +33,8 @@ public class LianjiaSpider {
      */
     public static List<HouseVo> getLianjiaByContent(String content) throws IOException {
         List<HouseVo> list = new ArrayList<>();
-        String baseUrl = "https://tj.lianjia.com/ershoufang";
-        String url = baseUrl + "/rs" + URLEncoder.encode(content, "UTF-8") + "/";
+        String baseUrl = "https://tj.lianjia.com";
+        String url = baseUrl + "/ershoufang/rs" + URLEncoder.encode(content, "UTF-8") + "/";
         logger.info(content + ">>开始请求：" + url);
         Document document = JsoupWrapper.parse(new URL(url), TIME_OUT);
         logger.info(content + ">>请求成功：" + url);
@@ -44,25 +44,23 @@ public class LianjiaSpider {
         if (pages.size() <= 0) {
             return list;
         }
-        Element page = pages.get(0);
-        Elements children = page.children();
-        logger.info(content + ">>有分页数据，共有" + children.size() + "页");
-        if (children.size() > 0) {
-            logger.info(content + ">>有分页数据，共有" + children.size() + "页");
-            children.forEach(a -> {
-                if (!"1".equals(a.text())) {
-                    String pageUrl = baseUrl + a.attr("href");
-                    Document pageDocument;
-                    try {
-                        logger.info(content + ">>开始请求：" + url);
-                        pageDocument = JsoupWrapper.parse(new URL(pageUrl), 30 * 1000);
-                        logger.info(content + ">>请求第" + a.text() + "页数据成功");
-                        parseSellList(list, pageDocument);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        String pageUrlBase = pages.get(0).attr("page-url");
+        JSONObject pageData = JSON.parseObject(pages.get(0).attr("page-data"));
+        Integer totalPage = pageData.getInteger("totalPage");
+        logger.info(content + ">>有分页数据，共有" + totalPage + "页");
+        if (totalPage > 1) {
+            for (int i = 2; i <= totalPage; i++) {
+                String pageUrl = baseUrl + pageUrlBase.replaceFirst("\\{page}", String.valueOf(i));
+                Document pageDocument;
+                try {
+                    logger.info("{}>>开始请求：{}", content, url);
+                    pageDocument = JsoupWrapper.parse(new URL(pageUrl), 30 * 1000);
+                    logger.info(content + ">>请求第{}页数据成功", i);
+                    parseSellList(list, pageDocument);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            });
+            }
         }
         return list;
     }
@@ -119,31 +117,31 @@ public class LianjiaSpider {
 
     public static JSONObject getHouseDetail(String url) throws IOException, XpathSyntaxErrorException {
 
-        JSONObject json=new JSONObject();
+        JSONObject json = new JSONObject();
         Document document = JsoupWrapper.parse(new URL(url), TIME_OUT);
         JXDocument jxDocument = new JXDocument(document);
         List<Object> baseInfo = jxDocument.sel(XPATH_BASE);
-        if(!baseInfo.isEmpty()){
+        if (!baseInfo.isEmpty()) {
             Element element = (Element) baseInfo.get(0);
             Elements children = element.children();
-            JSONObject baseJson=new JSONObject();
-            for(Element child:children){
-                String key=child.getElementsByTag("span").text();
-                String value=child.text().replace(key,"");
-                baseJson.put(key,value);
+            JSONObject baseJson = new JSONObject();
+            for (Element child : children) {
+                String key = child.getElementsByTag("span").text();
+                String value = child.text().replace(key, "");
+                baseJson.put(key, value);
             }
-            json.put("baseInfo",baseJson);
+            json.put("baseInfo", baseJson);
         }
         List<Object> dealInfo = jxDocument.sel(XPATH_DEAL);
-        if(!dealInfo.isEmpty()){
+        if (!dealInfo.isEmpty()) {
             Element element = (Element) dealInfo.get(0);
             Elements children = element.children();
-            JSONObject dealJson=new JSONObject();
-            children.forEach(child->{
+            JSONObject dealJson = new JSONObject();
+            children.forEach(child -> {
                 Elements span = child.getElementsByTag("span");
-                dealJson.put(span.get(0).text(),span.get(1).text());
+                dealJson.put(span.get(0).text(), span.get(1).text());
             });
-            json.put("dealInfo",dealJson);
+            json.put("dealInfo", dealJson);
         }
         return json;
     }
