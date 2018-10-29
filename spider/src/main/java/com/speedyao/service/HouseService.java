@@ -49,7 +49,8 @@ public class HouseService {
     /**
      * 每周一12点执行一次
      */
-    @Scheduled(cron = "0 30 10 ? * WED")
+//    @Scheduled(cron = "0 0 12 ? * WEN")
+    @Scheduled(initialDelay = 1000*30)
     @Async
     public void getLianjiaData() {
         List<Xiaoqu> xiaoquList = xiaoquMapper.selectAll();
@@ -106,7 +107,9 @@ public class HouseService {
     /**
      * 填充房屋基本信息和交易信息
      */
-    @Scheduled(cron = "10 5 23 ? * WED")
+//    @Scheduled(cron = "0 0 13 ? * WEN")
+    @Scheduled(initialDelay = 1000*60*30)
+    @Async
     public void fillHouseDetail() {
         String date = DateUtils.currentDateStr();
         House record = new House();

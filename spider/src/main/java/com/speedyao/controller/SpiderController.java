@@ -32,12 +32,20 @@ public class SpiderController {
         json.put("msg","添加成功");
         return json;
     }
-    @RequestMapping(value = "/house/start",method = RequestMethod.GET)
+    @RequestMapping(value = "/house/list/start",method = RequestMethod.GET)
     @ResponseBody
-    public Object startSpider(){
+    public Object startHouseList(){
         JSONObject json=new JSONObject();
         houseService.getLianjiaData();
-        json.put("msg","添加成功");
+        json.put("msg","开始爬取房产列表信息");
+        return json;
+    }
+    @RequestMapping(value = "/house/detail/start",method = RequestMethod.GET)
+    @ResponseBody
+    public Object startHouseDetail(){
+        JSONObject json=new JSONObject();
+        houseService.fillHouseDetail();
+        json.put("msg","开始爬取房产详细信息");
         return json;
     }
 }
