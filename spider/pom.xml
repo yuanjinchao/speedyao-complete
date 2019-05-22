@@ -103,17 +103,15 @@
             </properties>
         </profile>
         <profile>
-            <id>sit</id>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
-                <profile.id>sit</profile.id>
+                <profile.id>production</profile.id>
             </properties>
         </profile>
-        <profile>
-            <id>pro</id>
-            <properties>
-                <profile.id>pro</profile.id>
-            </properties>
-        </profile>
+
     </profiles>
 
     <build>

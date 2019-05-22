@@ -2,6 +2,8 @@ import com.speedyao.media.MediaUtil;
 import com.speedyao.net.http.HttpClientUtil;
 import org.junit.Test;
 
+import java.io.IOException;
+
 /**
  * Created by speedyao on 2018/5/18.
  */
@@ -32,5 +34,23 @@ public class HttpTest {
                 System.out.println(e.getMessage());
             }
         }
+    }
+    @Test
+    public void test1() throws IOException, InterruptedException {
+        HttpClientUtil clientUtil = HttpClientUtil.getInstance();
+        for(int i=0;i<1000;i++){
+            try {
+                clientUtil.doGet("https://market.m.taobao.com/app/idleFish-F2e/widle-taobao-rax/page-detail?wh_weex=true&wx_navbar_transparent=true&id=593584048233&ut_sk=1.XCBTu5P64qsDAFmfTaFJ2MDg_12431167_1557367586819.Copy.detail.593584048233.256616410&forceFlush=1",null);
+//                clientUtil.doGet("https://blog.csdn.net/u010430495/article/details/87376333",null);
+//                clientUtil.doGet("https://blog.csdn.net/u010430495/article/details/88872098",null);
+            } catch (IOException e) {
+                continue;
+            }
+            if(i%10==0){
+                System.out.println("已请求："+i);
+            }
+            Thread.sleep(60*1000);
+        }
+
     }
 }

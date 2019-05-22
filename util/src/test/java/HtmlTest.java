@@ -3,6 +3,7 @@ import com.speedyao.spider.lianjia.LianjiaSpider;
 import com.speedyao.spider.lianjia.vo.HouseVo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.seimicrawler.xpath.exception.XpathSyntaxErrorException;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +43,19 @@ public class HtmlTest {
         });
 
         list.forEach(line -> System.out.println(line));
+
+    }
+
+
+    @Test
+    public void test3() throws IOException {
+        Document doc = Jsoup.parse(new URL("https://www.51test.net/show/8949996.html"),30*1000);
+        Elements p = doc.getElementsByTag("p");
+        for(int i=0;i<p.size();i++){
+            Element element = p.get(i);
+            System.out.println(element.text());
+
+        }
 
     }
 
