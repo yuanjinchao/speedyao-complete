@@ -36,7 +36,7 @@ public class RingBuffer {
         return in+1-out>=bufferSize;
     }
     public boolean isEmpty(){
-        return in==out;
+        return out>=in;
     }
 
     public long getIn(){

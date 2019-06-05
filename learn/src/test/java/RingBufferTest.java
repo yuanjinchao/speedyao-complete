@@ -11,51 +11,54 @@ import java.util.List;
 public class RingBufferTest {
 
 
+    private static final int putSize=100_0000;
+    private static final int threadSize=5;
+
 
     @Test
     public void main() throws InterruptedException, IOException {
+
+        System.out.println(putSize*5);
+
         RingBuffer ringBuffer=new RingBuffer(100);
+        for (int i=0;i<threadSize;i++){
+            new Thread(() -> {
+                for (int j = 0;j < putSize; j++) {
+                    while (!ringBuffer.put(j)){
 
-        new Thread(() -> {
-            for (int i = 0; i < 100000; i++) {
-                while (!ringBuffer.put(i)){
-
+                    }
                 }
-            }
-        }).start();
-        new Thread(() -> {
-            for (int i = 100000; i < 100000*2; i++) {
-                while (!ringBuffer.put(i)){
-
-                }
-            }
-        }).start();
+            }).start();
+        }
 
 
-        List list1=new ArrayList();
-        List list2=new ArrayList();
+        Thread.sleep(1000);
 
-        new Thread(() -> {
-            while (true){
-                Object take = ringBuffer.take();
-                if(take!=null){
-                    list1.add(take);
-                }
-                if(list1.size()+list2.size()==100000*2)break;
-            }
+//        new Thread(() -> {
+//            while (true){
+//                Object take = ringBuffer.take();
+//                if(ringBuffer.getOut()%10000==0){
+//                    System.out.println(ringBuffer.getIn()+","+ringBuffer.getOut());
+//                }
+//                if(take!=null){
+//
+//                }
+//
+//            }
+//
+//        }).start();
 
-        }).start();
 
-
+        int count=0;
         while (true){
             Object take = ringBuffer.take();
-
-            if(take!=null){
-                list2.add(take);
+            if (take!=null){
+                count++;
             }
-            if(list1.size()+list2.size()==100000*2)break;
+            if(ringBuffer.getOut()%10000==0){
+                System.out.println(count);
+                System.out.println(ringBuffer.getIn()+","+ringBuffer.getOut());
+            }
         }
-        System.out.println(list1.size());
-        System.out.println(list2.size());
     }
 }
