@@ -103,7 +103,7 @@
             </properties>
         </profile>
         <profile>
-            <id>dev</id>
+            <id>production</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
