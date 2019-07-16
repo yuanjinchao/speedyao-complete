@@ -59,6 +59,7 @@ public class XiaoquTest  {
             Xiaoqu xiaoqu = json.toJavaObject(Xiaoqu.class);
             xiaoquMapper.insert(xiaoqu);
         });
+
     }
 
     /**
