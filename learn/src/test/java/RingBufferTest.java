@@ -2,8 +2,6 @@ import com.speedyao.ringbuffer.RingBuffer;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by speedyao on 2019/6/5.

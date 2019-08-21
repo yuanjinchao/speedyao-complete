@@ -11,7 +11,7 @@
     <modules>
         <module>util</module>
         <module>spider</module>
-        <module>springbootdemo</module>
+        <module>springboot-demo</module>
         <module>bill</module>
         <module>learn</module>
     </modules>
@@ -20,15 +20,23 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
     </properties>
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+            <version>1.16.12</version>
         </dependency>
 
     </dependencies>
