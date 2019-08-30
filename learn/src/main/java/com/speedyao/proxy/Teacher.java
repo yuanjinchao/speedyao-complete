@@ -16,4 +16,12 @@ public class Teacher implements Person {
     public void say() {
         System.out.println(String.join(",","I'm a teacher"));
     }
+
+    public void teach(){
+        this.speak();
+    }
+
+    private void speak(){
+        System.out.println("speak");
+    }
 }
