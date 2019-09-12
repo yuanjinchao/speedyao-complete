@@ -1,11 +1,14 @@
 package com.speedyao.media;
 
+import org.apache.commons.io.FileUtils;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * 多媒体工具类
@@ -47,6 +50,16 @@ public class MediaUtil {
                 }
             }
         }
+    }
+
+    public static void decodeCue(String file) throws IOException {
+        List list = FileUtils.readLines(new File(file), "gbk");
+        list.forEach(str-> System.out.println(str));
+        File bakFile=new File(file);
+        if(!bakFile.exists()){
+            bakFile.createNewFile();
+        }
+        FileUtils.writeLines(bakFile,"UTF-8",list);
     }
 
 }
