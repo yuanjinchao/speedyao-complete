@@ -82,11 +82,10 @@
             <!--<artifactId>security-client</artifactId>-->
             <!--<version>1.1</version>-->
         <!--</dependency>-->
-
         <dependency>
-            <groupId>io.reactivex.rxjava2</groupId>
-            <artifactId>rxjava</artifactId>
-            <version>2.1.7</version>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>3.9.1</version>
         </dependency>
 
     </dependencies>
