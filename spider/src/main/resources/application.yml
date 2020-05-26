@@ -1,13 +1,6 @@
 server:
   port: 8080
 
-
-spring:
- application:
-   name: @project.artifactId@
- profiles:
-   active: @profile.id@
-
 ## 该配置节点为独立的节点，有很多同学容易将这个配置放在spring的节点下，导致配置无法被识别
 mybatis:
   mapper-locations: classpath:mapping/*.xml  #注意：一定要对应mapper映射xml文件的所在路径
@@ -21,6 +14,10 @@ pagehelper:
  params: count=countSql
 
 spring:
+ application:
+  name: @project.artifactId@
+ profiles:
+  active: @profile.id@
  datasource:
   name: spider
   url: jdbc:mysql://192.168.132.129:3306/spider?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false
