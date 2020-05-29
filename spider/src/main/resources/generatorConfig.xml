@@ -4,8 +4,19 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
     <!-- 数据库驱动:选择你的本地硬盘上面的数据库驱动包-->
-    <classPathEntry  location="C:/Users/Administrator/.m2/repository/mysql/mysql-connector-java/5.1.26/mysql-connector-java-5.1.26.jar"/>
     <context id="DB2Tables"  targetRuntime="MyBatis3">
+        <property name="mybatisVersion" value="3.4.6"/>
+        <property name="autoDelimitKeywords" value="true" />
+        <property name="beginningDelimiter" value="`" />
+        <property name="endingDelimiter" value="`" />
+        <property name="javaFileEncoding" value="utf-8" />
+
+
+        <!-- 批量插入插件 -->
+        <plugin type="com.itfsw.mybatis.generator.plugins.BatchInsertPlugin"/>
+        <!-- 数据Model属性对应Column获取插件 -->
+        <plugin type="com.itfsw.mybatis.generator.plugins.ModelColumnPlugin"/>
+
         <commentGenerator>
             <property name="suppressDate" value="true"/>
             <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
