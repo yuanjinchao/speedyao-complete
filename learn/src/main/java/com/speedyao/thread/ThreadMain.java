@@ -16,7 +16,7 @@ public class ThreadMain {
                 while (count<=2){
                     try {
                         System.out.println(Thread.currentThread().getId()+"等待："+count);
-                        Thread.sleep(100000);
+                        Thread.sleep(10000);
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -26,7 +26,6 @@ public class ThreadMain {
                 }
             });
         }
-
         System.in.read();
     }
 }

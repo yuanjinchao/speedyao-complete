@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_FILE" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/@project.artifactId@/log.log"/>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    <property name="MSG_LOG_FILE" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/@project.artifactId@/msg_log.log"/>
+
+     <!--记录入库失败的mq数据-->
+    <appender name="MSG_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}: %m%n</pattern>
+        </encoder>
+        <file>${MSG_LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${MSG_LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${LOG_FILE_MAX_SIZE:-10MB}</maxFileSize>
+            <maxHistory>${LOG_FILE_MAX_HISTORY:-0}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="market.mqMsgMonitor" level="INFO">
+        <appender-ref ref="MSG_FILE"/>
+    </logger>
+</configuration>
